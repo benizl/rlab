@@ -1,0 +1,24 @@
+{% load fpga_tags %}
+
+<div>
+	<h1 style="text-align:center">Reservation Panel</h1>
+{% if backends %}
+	{% for be in backends %}
+		<div style="overflow:auto;background:#AAAAAA;margin:10px auto;padding:10px;width:50%;">
+			<div><h2>{{ be.name }}</h2></div>
+			<div style="float:left;width:10%;padding:10px;margin:10px">img</div>
+			<div style="float:left;width:50%;padding:10px;margin:10px">
+				{% if be in allocs %}
+					Reserved until {{ allocs | get_item:be}}
+				{% else %}
+					<a href={{ be.name }}>Grab it!</a>
+				{% endif %}
+			</div>
+			<div style="clear:both"></div>
+		</div>
+	{% endfor %}
+{% else %}
+	<h1>No backends configured</h1>
+{% endif %}
+
+</div>
