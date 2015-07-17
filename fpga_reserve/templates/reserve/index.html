@@ -1,24 +1,59 @@
 {% load fpga_tags %}
 
-<div>
+<head>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.blue_grey-indigo.min.css" />
+	<script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+<div style="padding:0 20%">
 	<h1 style="text-align:center">Reservation Panel</h1>
+	<p>Logged in as {{ user}}. <a href="/logout">Log Out</a></p>
+	<div style="float:left;width:45%">
 {% if backends %}
-	{% for be in backends %}
-		<div style="overflow:auto;background:#AAAAAA;margin:10px auto;padding:10px;width:50%;">
-			<div><h2>{{ be.name }}</h2></div>
-			<div style="float:left;width:10%;padding:10px;margin:10px">img</div>
-			<div style="float:left;width:50%;padding:10px;margin:10px">
-				{% if be in allocs %}
-					Reserved until {{ allocs | get_item:be}}
-				{% else %}
-					<a href={{ be.name }}>Grab it!</a>
+	{% for be in backends|dictsort:"name" %}
+		<div class="mdl-card mdl-shadow--4dp" style="overflow:auto;margin:10px;width:auto">
+			<div class="mdl-card__title"><h2>{{ be.name }}</h2></div>
+			<div class="mdl-card__media">img</div>
+			<div class="mdl-card__actions">
+				{% if be in callocs and callocs|get_item:be|alloc_user == user %}
+						<p>Currently owned by you! <a href={{ be.name }}>Claim Reservation</a></p>
+						<p>You have it until {{ callocs|get_item:be|alloc_endtime }}.</p>
+				{% elif be in lallocs %}
+					<p>
+					Reserved until {{ lallocs|get_item:be|alloc_endtime }}.
+					{% if can_reserve %}<a href="reserve/{{ be.name }}">Reserve</a>{% endif %}
+					</p>
+				{% elif can_reserve %}
+					<p><a href="reserve/{{ be.name }}">Grab it!</a></p>
 				{% endif %}
 			</div>
-			<div style="clear:both"></div>
 		</div>
 	{% endfor %}
 {% else %}
 	<h1>No backends configured</h1>
 {% endif %}
+	</div>
 
+	<div style="float:right; width:45%">
+		<div class="mdl-card mdl-shadow--4dp" style="margin:10px;width:auto">
+			<div class="mdl-card__title"><h2>My Reservations</h2></div>
+			{% if uallocs|length > 0 %}
+				{% for a in uallocs %}
+					<div style="padding:5px">
+						<h3>{{ a|alloc_backend }}</h3>
+						<p>From {{ a.start }}</p>
+						<p>Until {{ a.end }}</p>
+						<p><a href="remove/{{ a.id }}">Remove Reservation</a></p>
+					</div>
+				{% endfor %}
+			{% else %}
+				No Reservations.
+			{% endif %}
+		</div>
+	</div>
 </div>
+</body>

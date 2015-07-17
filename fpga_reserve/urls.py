@@ -4,5 +4,7 @@ from . import views
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
-	url(r'^(?P<backend>[\w]+)/$', views.proxy, name='proxy')
+	url(r'^(?P<backend>[\w]+)/$', views.proxy, name='proxy'),
+	url(r'^reserve/(?P<backend>[\w]+)/$', views.reserve, name='reserve'),
+	url(r'^remove/(?P<alloc>[\w]+)/$', views.remove_res, name='remove'),
 ]
