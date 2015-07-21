@@ -11,9 +11,10 @@
 
 <body>
 <div>
-	<h1 style="text-align:center">Reservation Panel</h1>
-	<p>Logged in as {{ user}}. <a href="/logout">Log Out</a></p>
-	<div style="width:60%;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:center">
+	<header class="mdl-layout__header">
+		<h1 style="text-align:center">Reservation Panel</h1>
+	</header>
+	<div style="width:80%;margin:80px auto;display:flex;flex-wrap:wrap;justify-content:center;">
 {% if backends %}
 	{% for be in backends|dictsort:"id" %}
 		<div class="mdl-card mdl-shadow--4dp" style="margin:10px;width:350px">
@@ -59,5 +60,14 @@
 	<h1>No backends configured</h1>
 {% endif %}
 	</div>
+
+	<footer class="mdl-mini-footer">
+		<div class="mdl-mini-footer--left-section">
+			<div class="mdl-logo">Logged in as {{ user }}.</div>
+			<ul class="mdl-mini-footer--link-list">
+			<li><a href="/logout">Log Out</a></li>
+			</ul>
+		</div>
+	</footer>
 </div>
 </body>
