@@ -22,29 +22,30 @@
 			<div class="mdl-card__title be-card__title">
 				<h2 class="mdl-card__title-text">{{ be.board_type }}/{{ be.id }}</h2>
 			</div>
-				{% if be in callocs and callocs|get_item:be|alloc_user == user %}
-				<div class="mdl-card__supporting-text">
-					You have it until {{ callocs|get_item:be|alloc_endtime }}
-				</div>
-				{% elif uallocs.0.backend == be %}
-				<div class="mdl-card__supporting-text">
-					You have it reserved at {{ uallocs.0.start }}
-				</div>
-				{% elif be in lallocs %}
-				<div class="mdl-card__supporting-text">
-					Reserved until {{ lallocs|get_item:be|alloc_endtime }}
-				</div>
-				{% elif can_reserve %}
-				<div class="mdl-card__supporting-text">
-					Available.
-				</div>
-				{% else%}
-				<div class="mdl-card__supporting-text">
-					Can only reserve one board at a time.
-				</div>
-				{% endif %}
 
-			<div class="mdl-card__actions mdl-card--border">
+			{% if be in callocs and callocs|get_item:be|alloc_user == user %}
+			<div class="mdl-card__supporting-text alloc-owned">
+				You have it until {{ callocs|get_item:be|alloc_endtime }}
+			</div>
+			{% elif uallocs.0.backend == be %}
+			<div class="mdl-card__supporting-text alloc-future">
+				You have it reserved at {{ uallocs.0.start }}
+			</div>
+			{% elif be in lallocs %}
+			<div class="mdl-card__supporting-text alloc-navail">
+				Reserved until {{ lallocs|get_item:be|alloc_endtime }}
+			</div>
+			{% elif can_reserve %}
+			<div class="mdl-card__supporting-text alloc-avail">
+				Available.
+			</div>
+			{% else%}
+			<div class="mdl-card__supporting-text alloc-noreserve">
+				Can only reserve one board at a time.
+			</div>
+			{% endif %}
+
+			<div class="mdl-card__actions mdl-card--border be-card__actions">
 				{% if be in callocs and callocs|get_item:be|alloc_user == user %}
 					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="{{ be.name }}">Claim Reservation</a>
 				{% elif uallocs.0.backend == be %}
@@ -52,7 +53,7 @@
 				{% elif be in lallocs and can_reserve %}
 					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Reserve</a>
 				{% elif can_reserve %}
-					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Claim Now</a>
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Claim Now</a>	
 				{% endif %}
 			</div>
 		</div>

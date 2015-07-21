@@ -20,3 +20,37 @@ div#content {
 	height:150px;
 	background: transparent url('/static/reserve/de2-small-c.jpg') no-repeat right / contain
 }
+
+.be-card__actions {
+	height:53px;
+}
+
+.alloc-owned {
+	width:100%;
+	background-color: #82c46a;
+	color:#000;
+}
+
+.alloc-future {
+	width:100%;
+	background-color: #6e8db5;
+	color:#fff;
+}
+
+.alloc-avail {
+	width:100%;
+	background-color: #82c46a;
+	color:#000;
+}
+
+.alloc-navail {
+	width:100%;
+	background-color: #F44336;
+	color:#fff;
+}
+
+.alloc-noreserve {
+	width:100%;
+	background-color: #fff;
+	color:#000;
+}
