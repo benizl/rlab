@@ -32,11 +32,11 @@
 
 			{% if be in callocs and callocs|get_item:be|alloc_user == user %}
 			<div class="mdl-card__supporting-text alloc-owned">
-				You have it until {{ callocs|get_item:be|alloc_endtime }}
+				Yours until {{ callocs|get_item:be|alloc_endtime }}
 			</div>
 			{% elif uallocs.0.backend == be %}
 			<div class="mdl-card__supporting-text alloc-future">
-				You have it reserved at {{ uallocs.0.start }}
+				Your reservation starts at {{ uallocs.0.start }}
 			</div>
 			{% elif be in lallocs %}
 			<div class="mdl-card__supporting-text alloc-navail">
@@ -48,19 +48,19 @@
 			</div>
 			{% else%}
 			<div class="mdl-card__supporting-text alloc-noreserve">
-				Can only reserve one board at a time.
+				You can only reserve one board at a time.
 			</div>
 			{% endif %}
 
 			<div class="mdl-card__actions mdl-card--border be-card__actions">
 				{% if be in callocs and callocs|get_item:be|alloc_user == user %}
-					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="{{ be.name }}">Claim Reservation</a>
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="{{ be.name }}">Connect</a>
 				{% elif uallocs.0.backend == be %}
-					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="remove/{{ uallocs.0.id }}">Remove Reservation</a>
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="remove/{{ uallocs.0.id }}">Delete Reservation</a>
 				{% elif be in lallocs and can_reserve %}
 					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Reserve</a>
 				{% elif can_reserve %}
-					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Claim Now</a>	
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Connect</a>	
 				{% endif %}
 			</div>
 		</div>
