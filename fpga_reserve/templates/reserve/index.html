@@ -54,13 +54,13 @@
 
 			<div class="mdl-card__actions mdl-card--border be-card__actions">
 				{% if be in callocs and callocs|get_item:be|alloc_user == user %}
-					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="{{ be.name }}">Connect</a>
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="backend/{{ be.id }}">Connect</a>
 				{% elif uallocs.0.backend == be %}
 					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="remove/{{ uallocs.0.id }}">Delete Reservation</a>
 				{% elif be in lallocs and can_reserve %}
-					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Reserve</a>
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.id }}">Reserve</a>
 				{% elif can_reserve %}
-					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Connect</a>	
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.id }}">Connect</a>	
 				{% endif %}
 			</div>
 		</div>

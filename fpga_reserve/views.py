@@ -44,7 +44,7 @@ def index(request):
 	return render(request, 'reserve/index.html', context)
 
 def reserve(request, backend):
-	be = get_list_or_404(models.Backend, name__iexact=backend)[0]
+	be = get_object_or_404(models.Backend, pk=backend)
 	user = request.user
 
 	# Only allow one current allocation per user
@@ -76,7 +76,7 @@ def remove_res(request, alloc):
 	return HttpResponseRedirect(reverse('fpga_reserve:index'))
 
 def proxy(request, backend):
-	be = get_list_or_404(models.Backend, name__iexact=backend)[0]
+	be = get_object_or_404(models.Backend, pk=backend)
 	user = request.user
 
 	uallocs = models.Allocation.objects.filter(user=user, backend=be,
