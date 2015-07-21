@@ -1,34 +1,56 @@
 {% load fpga_tags %}
+{% load staticfiles %}
 
 <head>
 	<meta http-equiv="Cache-Control" content="no-store" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.blue_grey-indigo.min.css" />
+	<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.red-deep_purple.min.css" />
 	<script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
 <body>
-<div style="padding:0 20%">
+<div>
 	<h1 style="text-align:center">Reservation Panel</h1>
 	<p>Logged in as {{ user}}. <a href="/logout">Log Out</a></p>
-	<div style="float:left;width:45%">
+	<div style="width:60%;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:center">
 {% if backends %}
-	{% for be in backends|dictsort:"name" %}
-		<div class="mdl-card mdl-shadow--4dp" style="overflow:auto;margin:10px;width:auto">
-			<div class="mdl-card__title"><h2>{{ be.name }}</h2></div>
-			<div class="mdl-card__media">img</div>
-			<div class="mdl-card__actions">
+	{% for be in backends|dictsort:"id" %}
+		<div class="mdl-card mdl-shadow--4dp" style="margin:10px;width:350px">
+			<div class="mdl-card__title" style="height:150px;background: transparent url({% static 'reserve/de2-small-c.jpg' %}) no-repeat right / contain">
+				<h2 class="mdl-card__title-text">{{ be.board_type }}/{{ be.id }}</h2>
+			</div>
 				{% if be in callocs and callocs|get_item:be|alloc_user == user %}
-						<p>Currently owned by you! <a href={{ be.name }}>Claim Reservation</a></p>
-						<p>You have it until {{ callocs|get_item:be|alloc_endtime }}.</p>
+				<div class="mdl-card__supporting-text">
+					You have it until {{ callocs|get_item:be|alloc_endtime }}
+				</div>
+				{% elif uallocs.0.backend == be %}
+				<div class="mdl-card__supporting-text">
+					You have it reserved at {{ uallocs.0.start }}
+				</div>
 				{% elif be in lallocs %}
-					<p>
-					Reserved until {{ lallocs|get_item:be|alloc_endtime }}.
-					{% if can_reserve %}<a href="reserve/{{ be.name }}">Reserve</a>{% endif %}
-					</p>
+				<div class="mdl-card__supporting-text">
+					Reserved until {{ lallocs|get_item:be|alloc_endtime }}
+				</div>
 				{% elif can_reserve %}
-					<p><a href="reserve/{{ be.name }}">Grab it!</a></p>
+				<div class="mdl-card__supporting-text">
+					Available.
+				</div>
+				{% else%}
+				<div class="mdl-card__supporting-text">
+					Can only reserve one board at a time.
+				</div>
+				{% endif %}
+
+			<div class="mdl-card__actions mdl-card--border">
+				{% if be in callocs and callocs|get_item:be|alloc_user == user %}
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="{{ be.name }}">Claim Reservation</a>
+				{% elif uallocs.0.backend == be %}
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="remove/{{ uallocs.0.id }}">Remove Reservation</a>
+				{% elif be in lallocs and can_reserve %}
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Reserve</a>
+				{% elif can_reserve %}
+					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="reserve/{{ be.name }}">Claim Now</a>
 				{% endif %}
 			</div>
 		</div>
@@ -36,24 +58,6 @@
 {% else %}
 	<h1>No backends configured</h1>
 {% endif %}
-	</div>
-
-	<div style="float:right; width:45%">
-		<div class="mdl-card mdl-shadow--4dp" style="margin:10px;width:auto">
-			<div class="mdl-card__title"><h2>My Reservations</h2></div>
-			{% if uallocs|length > 0 %}
-				{% for a in uallocs %}
-					<div style="padding:5px">
-						<h3>{{ a|alloc_backend }}</h3>
-						<p>From {{ a.start }}</p>
-						<p>Until {{ a.end }}</p>
-						<p><a href="remove/{{ a.id }}">Remove Reservation</a></p>
-					</div>
-				{% endfor %}
-			{% else %}
-				No Reservations.
-			{% endif %}
-		</div>
 	</div>
 </div>
 </body>

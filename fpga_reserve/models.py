@@ -6,6 +6,7 @@ class Backend(models.Model):
 	ip_addr = models.GenericIPAddressField()
 	web_port = models.IntegerField()
 	stream_port = models.IntegerField()
+	board_type = models.CharField(max_length=40)
 
 	def __unicode__(self):
 		return self.name

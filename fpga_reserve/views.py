@@ -31,8 +31,8 @@ def index(request):
 		if len(ba) > 0:
 			callocs[be] = ba[0]
 
-	# All (future) allocations for this user
-	uallocs = models.Allocation.objects.filter(user=user,end__gte=timezone.now())
+	# Closest (future) allocations for this user. Should only have one anyway
+	uallocs = models.Allocation.objects.filter(user=user,end__gte=timezone.now()).order_by('-end')
 
 	context = {'backends' : backends,
 		'lallocs' : lallocs,
