@@ -47,6 +47,11 @@ def reserve(request, backend):
 	be = get_list_or_404(models.Backend, name__iexact=backend)[0]
 	user = request.user
 
+	# Only allow one current allocation per user
+	uallocs = models.Allocation.objects.filter(user=user, end__gte=timezone.now())
+	if len(uallocs) > 0:
+		return HttpResponseRedirect(reverse('fpga_reserve:index'))
+
 	try:
 		last_alloc = models.Allocation.objects.filter(backend=be,end__gte=timezone.now()).order_by('-end')[0]
 		start_res = last_alloc.end
