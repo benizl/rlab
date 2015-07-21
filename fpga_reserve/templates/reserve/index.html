@@ -6,19 +6,20 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.red-deep_purple.min.css" />
 	<script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+	<link rel="stylesheet" href="{% static 'reserve/reserve.css' %}"/>
 </head>
 
 <body>
 <div>
 	<header class="mdl-layout__header">
-		<h1 style="text-align:center">Reservation Panel</h1>
+		<h1>Reservation Panel</h1>
 	</header>
-	<div style="width:80%;margin:80px auto;display:flex;flex-wrap:wrap;justify-content:center;">
+	<div id="content">
 {% if backends %}
 	{% for be in backends|dictsort:"id" %}
-		<div class="mdl-card mdl-shadow--4dp" style="margin:10px;width:350px">
-			<div class="mdl-card__title" style="height:150px;background: transparent url({% static 'reserve/de2-small-c.jpg' %}) no-repeat right / contain">
+		<div class="mdl-card mdl-shadow--4dp be-card">
+			<div class="mdl-card__title be-card__title">
 				<h2 class="mdl-card__title-text">{{ be.board_type }}/{{ be.id }}</h2>
 			</div>
 				{% if be in callocs and callocs|get_item:be|alloc_user == user %}

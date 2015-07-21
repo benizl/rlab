@@ -1,0 +1,22 @@
+
+h1 {
+	text-align: center;
+}
+
+div#content {
+	width:80%;
+	margin:80px auto;
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+}
+
+.be-card {
+	margin:10px;
+	width:350px;
+}
+
+.be-card__title {
+	height:150px;
+	background: transparent url('/static/reserve/de2-small-c.jpg') no-repeat right / contain
+}
