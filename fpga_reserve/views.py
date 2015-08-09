@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.views.decorators.http import require_http_methods
 
 from datetime import timedelta
 
@@ -77,8 +78,8 @@ def remove_res(request, alloc):
 
 	return HttpResponseRedirect(reverse('fpga_reserve:index'))
 
+@require_http_methods(["GET", "POST"])
 def proxy(request, backend, url):
-	import urllib2
 	be = get_object_or_404(models.Backend, pk=backend)
 	user = request.user
 
@@ -90,8 +91,7 @@ def proxy(request, backend, url):
 		return HttpResponse("You don't have an allocation at this time")
 
 	proxy_url = "http://" + be.ip_addr + ":" + str(be.web_port)
-	url.strip('/')
 	print url, proxy_url
 	view = HttpProxy.as_view(base_url=proxy_url, rewrite=True)
 	return view(request, url)
-	#return HttpResponse("Backend proxy to %s (%s, %d)" % (backend, be.ip_addr, be.web_port))
+
