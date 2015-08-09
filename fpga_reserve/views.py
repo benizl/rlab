@@ -6,6 +6,8 @@ from django.utils import timezone
 
 from datetime import timedelta
 
+from httpproxy.views import HttpProxy
+
 from . import models
 
 def index(request):
@@ -65,7 +67,7 @@ def reserve(request, backend):
 	new_alloc.save()
 
 	if start_res < timezone.now():
-		return HttpResponseRedirect(reverse('fpga_reserve:proxy', args=(backend,)))
+		return HttpResponseRedirect(reverse('fpga_reserve:proxy', args=(backend,'')))
 	else:
 		return HttpResponseRedirect(reverse('fpga_reserve:index'))
 
@@ -75,7 +77,8 @@ def remove_res(request, alloc):
 
 	return HttpResponseRedirect(reverse('fpga_reserve:index'))
 
-def proxy(request, backend):
+def proxy(request, backend, url):
+	import urllib2
 	be = get_object_or_404(models.Backend, pk=backend)
 	user = request.user
 
@@ -86,4 +89,9 @@ def proxy(request, backend):
 	if len(uallocs) == 0:
 		return HttpResponse("You don't have an allocation at this time")
 
-	return HttpResponse("Backend proxy to %s (%s, %d)" % (backend, be.ip_addr, be.web_port))
+	proxy_url = "http://" + be.ip_addr + ":" + str(be.web_port)
+	url.strip('/')
+	print url, proxy_url
+	view = HttpProxy.as_view(base_url=proxy_url, rewrite=True)
+	return view(request, url)
+	#return HttpResponse("Backend proxy to %s (%s, %d)" % (backend, be.ip_addr, be.web_port))
