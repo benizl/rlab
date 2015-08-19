@@ -153,20 +153,41 @@ class HttpProxy(View):
         return HttpResponse(response_body, status=status,
                 content_type=response.headers['content-type'])
 
+    def _postfile(self, request_url, request):
+        import requests
+
+        files = {}
+        for fname in request.FILES:
+            files[fname] = request.FILES[fname].read()
+
+        r = requests.post(request_url, files=files)
+
+        return r.content, r.status_code, r.headers['content-type']
+
     def post(self, request, *args, **kwargs):
         request_url = self.get_full_url(self.url)
-        request = self.create_request(request_url, request.body, request.META)
-        response = urllib2.urlopen(request)
-        try:
-            response_body = response.read()
-            status = response.getcode()
-            logger.debug(self._msg % response_body)
-        except urllib2.HTTPError, e:
-            response_body = e.read()
-            logger.error(self._msg % response_body)
-            status = e.code
+        if len(request.POST) == 0 and len(request.FILES) > 0:
+            # Django has already stripped the multipart headers off the file uploads
+            # so we need to recreate the full upload process here. Works OK for small
+            # files, should work out how to do it for larger ones (probably write the
+            # files to a temp location then use requests to stream them properly..)
+            response_body, status, content_type = self._postfile(request_url, request)
+        else:
+            proxy_request = self.create_request(request_url, request.body, request.META)
+            response = urllib2.urlopen(proxy_request)
+            try:
+                response_body = response.read()
+                status = response.getcode()
+                logger.debug(self._msg % response_body)
+            except urllib2.HTTPError, e:
+                response_body = e.read()
+                logger.error(self._msg % response_body)
+                status = e.code
+
+            content_type = response.headers['content-type']
+
         return HttpResponse(response_body, status=status,
-                content_type=response.headers['content-type'])
+                content_type=content_type)
 
     def get_full_url(self, url):
         """
