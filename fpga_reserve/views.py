@@ -68,15 +68,44 @@ def reserve(request, backend):
 	new_alloc.save()
 
 	if start_res < timezone.now():
-		return HttpResponseRedirect(reverse('fpga_reserve:proxy', args=(backend,'')))
+		return HttpResponseRedirect(reverse('fpga_reserve:backend', args=(backend,)))
 	else:
 		return HttpResponseRedirect(reverse('fpga_reserve:index'))
 
 def remove_res(request, alloc):
 	a = get_object_or_404(models.Allocation, pk=alloc)
-	a.delete()
+
+	# Rather than deleting, set the duration to zero so its never picked up. This keeps
+	# it in the db for us to inspect later. TODO: Valid flag
+	a.end = a.start
+	a.save()
 
 	return HttpResponseRedirect(reverse('fpga_reserve:index'))
+
+
+def backend(request, backend):
+	be = get_object_or_404(models.Backend, pk=backend)
+	user = request.user
+
+	uallocs = models.Allocation.objects.filter(user=user, backend=be,
+		start__lte=timezone.now(),
+		end__gte=timezone.now())
+
+	if len(uallocs) != 1:
+		return HttpResponseRedirect(reverse('fpga_reserve:index'))
+
+	# Total seconds until redirect is the time until the end of the reservation, less
+	# 30 seconds. This little buffer just helps with ensuring there's no overlap between
+	# students.
+	td = uallocs[0].end - timezone.now()
+	redirect_seconds = td.total_seconds() - 30
+
+	return render(request, 'reserve/backend.html',
+		{'backend' : backend,
+		 'alloc' : uallocs[0].pk,
+		 'redirect_seconds' : redirect_seconds,
+		 'expires' : uallocs[0].end})
+
 
 @require_http_methods(["GET", "POST"])
 def proxy(request, backend, url):

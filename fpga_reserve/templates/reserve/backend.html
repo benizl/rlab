@@ -1,0 +1,71 @@
+{% load staticfiles %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+	<meta http-equiv="CACHE-CONTROL" content="no-cache, no-store, must-revalidate, max-age=0" />
+	<meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8"/>
+	<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE"/>
+	<meta http-equiv="EXPIRES" content="0"/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.red-deep_purple.min.css" />
+	<script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+	<link rel="stylesheet" href="{% static 'reserve/backend.css' %}"/>
+
+	<script type="text/javascript">
+		(function () {
+			var timeLeft = {{ redirect_seconds }},
+				cinterval;
+
+			var timeDec = function (){
+				timeLeft--;
+
+				var minutes = Math.floor(timeLeft / 60);
+				var seconds = Math.floor(timeLeft % 60);
+				var h = ''
+
+				if (minutes > 0) {
+					h = minutes.toString() + ' Minutes remaining';
+				} else {
+					h = seconds.toString() + ' Seconds remaining';
+				}
+
+				document.getElementById('countdown').innerHTML = h;
+				if(timeLeft === 0){
+					clearInterval(cinterval);
+					// Redirect to a page that disables the allocation. This takes care of
+					// rounding issues regarding the remaining time.
+					window.location.href = '/reserve/remove/{{ alloc }}';
+				}
+			};
+
+			cinterval = setInterval(timeDec, 1000);
+		})();
+	</script>
+</head>
+
+<body>
+<div>
+	<header class="mdl-layout__header"><div class="mdl-layout__header-row">
+		<span class="mdl-layout-title">Reserved until {{ expires }}</span>
+		<div class="mdl-layout-spacer"></div>
+		<span class="mdl-navigation__link" id="countdown"></span>
+	</div></header>
+	<div id="content">
+	<iframe src="/reserve/proxy/{{ backend }}/"></iframe>
+	</div>
+
+	<footer class="mdl-mini-footer">
+		<div class="mdl-mini-footer--left-section">
+			<div class="mdl-logo">Logged in as {{ user }}.</div>
+			<ul class="mdl-mini-footer--link-list">
+			<li><a href="/logout">Log Out</a></li>
+			</ul>
+		</div>
+	</footer>
+</div>
+</body>
+</html>
