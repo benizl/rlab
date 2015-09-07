@@ -85,6 +85,7 @@ def remove_res(request, alloc):
 
 def backend(request, backend):
 	be = get_object_or_404(models.Backend, pk=backend)
+	vid = be.stream_port
 	user = request.user
 
 	uallocs = models.Allocation.objects.filter(user=user, backend=be,
@@ -102,6 +103,7 @@ def backend(request, backend):
 
 	return render(request, 'reserve/backend.html',
 		{'backend' : backend,
+		 'vid' : vid,
 		 'alloc' : uallocs[0].pk,
 		 'redirect_seconds' : redirect_seconds,
 		 'expires' : uallocs[0].end})
